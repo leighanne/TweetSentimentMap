@@ -12,3 +12,17 @@ html, body, #map-canvas {
 	margin: 0;
 	padding: 0;
 }
+
+#settings-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	margin: 0;
+	padding: 100px;
+	pointer-events: none;
+}
+
+#filter {
+	pointer-events: auto;
+}

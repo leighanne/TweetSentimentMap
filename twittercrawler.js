@@ -1,14 +1,10 @@
 var Twitter = require('twitter');
-var fs = require('fs');
 var MongoClient = require('mongodb').MongoClient;
 var Server = require('mongodb').Server;
 
 var dbserver = 'localhost';
 var dbport = 27017;
 var db;
-
-var keywords;
-var keywordslist;
 
 var crawler = function(io) {
 	// init database
@@ -37,29 +33,15 @@ var crawler = function(io) {
 		access_token_key: '1064868938-Fxmllk5jTahy8SMCGsKYCr5sIoSeXI4WDW2c2uT',
 		access_token_secret: 'JMi5ZMktviBaikakSvTMXb2k0Qd8JfYXWhWzZcEkzzJsu'
 	});
-
-	// read keywords from file
-	keywords = fs.readFileSync('keywords.txt', 'utf-8').trim().replace(/\n/g, ",");
-	keywordslist = keywords.split(",");
-
-	client.stream('statuses/filter', {track: keywords}, function(stream) {
+	
+	client.stream('statuses/sample', function(stream) {
 		stream.on('data', function(tweet) {
 			// only record tweets with location info
 			if(tweet.coordinates && tweet.coordinates.coordinates) {
-				console.log('New tweet!');
-				// match key words
-				var word = '';
-				keywordslist.forEach(function(d) {
-					if(tweet.text.toLowerCase().indexOf(d.toLowerCase()) >= 0) {
-						word += d + ',';
-					}
-				});
-				word = word.replace(/^,+|,+$/g, '');
 				var item = {
 					text: tweet.text,
 					coordinates: tweet.coordinates.coordinates,
-					created_at: new Date(tweet.created_at),
-					keyword: word
+					created_at: new Date(tweet.created_at)
 				};
 				// store in database
 				db.collection('tweets').insert(item, function(err, result) {
@@ -67,7 +49,6 @@ var crawler = function(io) {
 						console.log('Insert doc failed');
 					}
 				});
-
 				// push to clients
 				io.emit('data', item);
 			}

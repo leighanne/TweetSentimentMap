@@ -8,11 +8,6 @@ var app = require('../app');
 var debug = require('debug')('TweetMap:server');
 var http = require('http');
 
-// websocket init
-var io = require('../websocket')(http);
-// crawler init
-var crawler = require('../twittercrawler')(io);
-
 /**
  * Get port from environment and store in Express.
  */
@@ -29,6 +24,11 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+
+// websocket init
+var io = require('../websocket')(server);
+// crawler init
+var crawler = require('../twittercrawler')(io);
 
 server.listen(port);
 server.on('error', onError);
