@@ -9,6 +9,8 @@
 
 	var markerClusterer;
 
+	var infoWindow = new google.maps.InfoWindow();
+
 	// load map
 	function init_map() {
 		var mapOptions = {
@@ -43,17 +45,32 @@
 				if(show) {
 					var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 					data.mapData.push(loc);
-					data.markers.push(new google.maps.Marker({ position: loc}));
+					var marker = new google.maps.Marker({ position: loc});
+					addPopover(marker, d.text);
+					data.markers.push(marker);
 				}
 			});
 		} else {
 			allData.forEach(function(d) {
 				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 				data.mapData.push(loc);
-				data.markers.push(new google.maps.Marker({ position: loc}));
+				var marker = new google.maps.Marker({ position: loc});
+				addPopover(marker, d.text);
+				data.markers.push(marker);
 			});
 		}
 		return data;
+	}
+
+	function addPopover(marker, data) {
+		google.maps.event.addListener(marker, 'mouseover', function() {
+			infoWindow.setContent(data);
+			infoWindow.open(map, marker);
+		});
+		google.maps.event.addListener(marker, 'mouseout', function() {
+			infoWindow.setContent('');
+			infoWindow.close();
+		});
 	}
 
 	$(document).ready(function() {
@@ -64,7 +81,9 @@
 				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 				heatmapData.push(loc);
 				//markers.push(new google.maps.Marker({ position: loc}));
-				markerClusterer.addMarker(new google.maps.Marker({ position: loc}));
+				var marker = new google.maps.Marker({ position: loc});
+				addPopover(marker, d.text);
+				markerClusterer.addMarker(marker);
 			});
 		});
 
@@ -96,7 +115,9 @@
 
 			//markers.push(new google.maps.Marker({ position: loc}));
 			if($('#markerclusterCbox').is(':checked')) {
-				markerClusterer.addMarker(new google.maps.Marker({ position: loc}));
+				var marker = new google.maps.Marker({ position: loc});
+				addPopover(marker, d.text);
+				markerClusterer.addMarker(marker);
 			}
 		});
 
