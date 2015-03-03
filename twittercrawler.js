@@ -46,7 +46,7 @@ var crawler = function(io) {
 				// store in database
 				db.collection('tweets').insert(item, function(err, result) {
 					if(err) {
-						console.log('Insert doc failed');
+						console.log('Inserting doc failed');
 					}
 				});
 				// push to clients
@@ -58,6 +58,21 @@ var crawler = function(io) {
 			console.log(error);
 		});
 	});
+
+	// remove old tweets, run every 30mins
+	setInterval(function() {
+		// remove tweets 30mins before
+		var params = {
+			created_at: {$lt: new Date(Date.now() - 30*60*1000)}
+		};
+		db.collection('tweets').remove(params, function(err, result) {
+			if(err) {
+				console.log('Removing old tweets failed');
+			} else {
+				console.log(result + ' old tweets removed');
+			}
+		});
+	}, 30*60*1000);
 };
 
 module.exports = crawler;
