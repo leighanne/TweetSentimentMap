@@ -59,11 +59,11 @@ var crawler = function(io) {
 		});
 	});
 
-	// remove old tweets, run every 30mins
+	// remove old tweets, run every 24hrs
 	setInterval(function() {
-		// remove tweets 30mins before
+		// remove tweets 24hrs before
 		var params = {
-			created_at: {$lt: new Date(Date.now() - 30*60*1000)}
+			created_at: {$lt: new Date(Date.now() - 24*60*60*1000)}
 		};
 		db.collection('tweets').remove(params, function(err, result) {
 			if(err) {
@@ -72,7 +72,7 @@ var crawler = function(io) {
 				console.log(result + ' old tweets removed');
 			}
 		});
-	}, 30*60*1000);
+	}, 24*60*60*1000);
 };
 
 module.exports = crawler;

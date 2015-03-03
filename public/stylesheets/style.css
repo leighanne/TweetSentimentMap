@@ -23,6 +23,6 @@ html, body, #map-canvas {
 	pointer-events: none;
 }
 
-#filter {
+#filter, #viz {
 	pointer-events: auto;
 }

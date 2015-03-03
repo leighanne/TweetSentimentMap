@@ -7,6 +7,8 @@
 	var filter = false;
 	var keywords = [];
 
+	var markerClusterer;
+
 	// load map
 	function init_map() {
 		var mapOptions = {
@@ -14,22 +16,58 @@
         	zoom: 5
 		};
 		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		// heat map
 		heatmap = new google.maps.visualization.HeatmapLayer({
 			data: heatmapData,
 			radius: 25
 		});
 		heatmap.setMap(map);
+		// marker cluster
+		markerClusterer = new MarkerClusterer(map, [], {ignoreHidden: true});
 	}
 	google.maps.event.addDomListener(window, 'load', init_map);
+
+	function buildData() {
+		var data = {
+			mapData: [],
+			markers: []
+		};
+		if(filter) {
+			allData.forEach(function(d) {
+				var show = false;
+				keywords.forEach(function(k) {
+					if(d.text.toLowerCase().indexOf(k.toLowerCase()) >= 0) {
+						show = true;
+					}
+				});
+				if(show) {
+					var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
+					data.mapData.push(loc);
+					data.markers.push(new google.maps.Marker({ position: loc}));
+				}
+			});
+		} else {
+			allData.forEach(function(d) {
+				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
+				data.mapData.push(loc);
+				data.markers.push(new google.maps.Marker({ position: loc}));
+			});
+		}
+		return data;
+	}
 
 	$(document).ready(function() {
 		// fetch data in database
 		$.get('/tweets', function(data) {
 			data.forEach(function(d) {
 				allData.push(d);
-				heatmapData.push(new google.maps.LatLng(d.coordinates[1], d.coordinates[0]));
+				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
+				heatmapData.push(loc);
+				//markers.push(new google.maps.Marker({ position: loc}));
+				markerClusterer.addMarker(new google.maps.Marker({ position: loc}));
 			});
 		});
+
 		// websocket...for real time data
 		var socket = io.connect('http://localhost:3000/');
 		socket.on('data', function(d) {
@@ -55,32 +93,53 @@
 			setTimeout(function() {
 				marker.setMap(null);
 			}, 1000);
+
+			//markers.push(new google.maps.Marker({ position: loc}));
+			if($('#markerclusterCbox').is(':checked')) {
+				markerClusterer.addMarker(new google.maps.Marker({ position: loc}));
+			}
 		});
+
 		// filter
 		$('#filterBtn').click(function() {
 			var filterStr = $('#filterInput').val();
-			var mapData = [];
+			var result;
+			markerClusterer.clearMarkers();
 			if(filterStr != '') {
 				keywords = filterStr.split();
 				filter = true;
-				allData.forEach(function(d) {
-					var show = false;
-					keywords.forEach(function(k) {
-						if(d.text.toLowerCase().indexOf(k.toLowerCase()) >= 0) {
-							show = true;
-						}
-					});
-					if(show)
-						mapData.push(new google.maps.LatLng(d.coordinates[1], d.coordinates[0]));
-				});
+				result = buildData(filter);
 			} else {
 				filter = false;
-				allData.forEach(function(d) {
-					mapData.push(new google.maps.LatLng(d.coordinates[1], d.coordinates[0]));
-				});
+				result = buildData(filter);
 			}
-			heatmapData = new google.maps.MVCArray(mapData);
-			heatmap.setData(heatmapData);
+			if($('#heatmapCbox').is(':checked')) {
+				heatmapData = new google.maps.MVCArray(result.mapData);
+				heatmap.setData(heatmapData);
+			}
+			if($('#markerclusterCbox').is(':checked')) {
+				markerClusterer = new MarkerClusterer(map, result.markers);
+			}
+		});
+
+		// heatmap check
+		$('#heatmapCbox').change(function() {
+			if($(this).is(':checked')) {
+				heatmap.setMap(map);
+			} else {
+				heatmap.setMap(null);
+			}
+		});
+
+		// markercluster check
+		$('#markerclusterCbox').change(function() {
+			if($(this).is(':checked')) {
+				var result = buildData();
+				markerClusterer = new MarkerClusterer(map, result.markers);
+			} else {
+				markerClusterer.clearMarkers();
+				//markerClusterer.setMap(null);
+			}
 		});
 	});
 
