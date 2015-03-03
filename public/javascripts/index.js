@@ -36,10 +36,10 @@
 		};
 		if(filter) {
 			allData.forEach(function(d) {
-				var show = false;
+				var show = true;
 				keywords.forEach(function(k) {
-					if(d.text.toLowerCase().indexOf(k.toLowerCase()) >= 0) {
-						show = true;
+					if(d.text.toLowerCase().indexOf(k.toLowerCase()) < 0) {
+						show = false;
 					}
 				});
 				if(show) {
@@ -104,20 +104,21 @@
 			}
 			var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 			heatmapData.push(loc);
-			// flash a marker
-			var marker = new google.maps.Marker({
-				position: loc,
-				map: map
-			});
-			setTimeout(function() {
-				marker.setMap(null);
-			}, 1000);
 
 			//markers.push(new google.maps.Marker({ position: loc}));
 			if($('#markerclusterCbox').is(':checked')) {
 				var marker = new google.maps.Marker({ position: loc});
 				addPopover(marker, d.text);
 				markerClusterer.addMarker(marker);
+			} else {
+				// flash a marker
+				var marker = new google.maps.Marker({
+					position: loc,
+					map: map
+				});
+				setTimeout(function() {
+					marker.setMap(null);
+				}, 1000);
 			}
 		});
 
@@ -127,7 +128,7 @@
 			var result;
 			markerClusterer.clearMarkers();
 			if(filterStr != '') {
-				keywords = filterStr.split();
+				keywords = filterStr.trim().split(/\s+/g);
 				filter = true;
 				result = buildData(filter);
 			} else {
