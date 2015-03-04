@@ -1,0 +1,10 @@
+branch-defaults:
+  master:
+    environment: tweetmap
+global:
+  application_name: TweetMap
+  default_ec2_keyname: tf-PC
+  default_platform: 64bit Amazon Linux 2014.09 v1.2.0 running Node.js
+  default_region: us-west-2
+  profile: eb-cli
+  sc: git
