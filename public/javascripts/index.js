@@ -88,7 +88,7 @@
 		});
 
 		// websocket...for real time data
-		var socket = io.connect('http://localhost:3000/');
+		var socket = io.connect('ws://tweetmap.elasticbeanstalk.com:3000/');
 		socket.on('data', function(d) {
 			allData.push(d);
 			// if there is a filter
