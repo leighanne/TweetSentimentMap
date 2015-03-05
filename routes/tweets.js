@@ -13,7 +13,10 @@ router.get('/', function(req, res, next) {
 		} else {
 			var col = db.collection('tweets');
 			if(col) {
-				col.find({}).toArray(function(err, docs) {
+				// only fetch the most recent 2 hrs
+				col.find({
+					created_at: {$gt: new Date(Date.now() - 2*60*60*1000)}
+				}).toArray(function(err, docs) {
 					if(err) {
 						console.log('Fetching documents failed');
 						res.send([]);
