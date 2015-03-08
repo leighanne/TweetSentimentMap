@@ -6,6 +6,9 @@ var dbserver = '52.11.124.218';
 var dbport = 27017;
 var db;
 
+var stall = true
+var twitterStream;
+
 var crawler = function(io) {
 	// init database
 	var dbClient = new MongoClient(new Server(dbserver, dbport));
@@ -27,37 +30,44 @@ var crawler = function(io) {
 	});
 
 	// init twitter API
-	var client = new Twitter({
-		consumer_key: 's2jdpYFgULDDuWXNCOFD7LWB6',
-		consumer_secret: 'vFlcuvJrLBQ40QgftwaBhzCCOkVf34OP8F1IsUrm6ze6TflL2i',
-		access_token_key: '1064868938-Fxmllk5jTahy8SMCGsKYCr5sIoSeXI4WDW2c2uT',
-		access_token_secret: 'JMi5ZMktviBaikakSvTMXb2k0Qd8JfYXWhWzZcEkzzJsu'
-	});
-	
-	client.stream('statuses/sample', function(stream) {
-		stream.on('data', function(tweet) {
-			// only record tweets with location info
-			if(tweet.coordinates && tweet.coordinates.coordinates) {
-				var item = {
-					text: tweet.text,
-					coordinates: tweet.coordinates.coordinates,
-					created_at: new Date(tweet.created_at)
-				};
-				// store in database
-				db.collection('tweets').insert(item, function(err, result) {
-					if(err) {
-						console.log('Inserting doc failed');
-					}
-				});
-				// push to clients
-				io.emit('data', item);
-			}
+	function init_crawler() {
+		var client = new Twitter({
+			consumer_key: 's2jdpYFgULDDuWXNCOFD7LWB6',
+			consumer_secret: 'vFlcuvJrLBQ40QgftwaBhzCCOkVf34OP8F1IsUrm6ze6TflL2i',
+			access_token_key: '1064868938-Fxmllk5jTahy8SMCGsKYCr5sIoSeXI4WDW2c2uT',
+			access_token_secret: 'JMi5ZMktviBaikakSvTMXb2k0Qd8JfYXWhWzZcEkzzJsu'
 		});
+		
+		client.stream('statuses/sample', function(stream) {
+			twitterStream = stream;
+			stream.on('data', function(tweet) {
+				// still receiving data
+				stall = false
+				// only record tweets with location info
+				if(tweet.coordinates && tweet.coordinates.coordinates) {
+					var item = {
+						text: tweet.text,
+						coordinates: tweet.coordinates.coordinates,
+						created_at: new Date(tweet.created_at)
+					};
+					// store in database
+					db.collection('tweets').insert(item, function(err, result) {
+						if(err) {
+							console.log('Inserting doc failed');
+						}
+					});
+					// push to clients
+					io.emit('data', item);
+				}
+			});
 
-		stream.on('error', function(error) {
-			console.log(error);
+			stream.on('error', function(error) {
+				console.log(error);
+			});
 		});
-	});
+	}
+	
+	init_crawler();
 
 	// remove old tweets, run every 24hrs
 	setInterval(function() {
@@ -73,6 +83,18 @@ var crawler = function(io) {
 			}
 		});
 	}, 24*60*60*1000);
+
+	// check if no data received in 90 secs
+	setInterval(function() {
+		if(!stall) {
+			stall = true;
+			return;
+		}
+		twitterStream.destroy();
+		setTimeout(function() {
+			init_crawler();
+		}, 90*1000);
+	}, 90*1000);
 };
 
 module.exports = crawler;
