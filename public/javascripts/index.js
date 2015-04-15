@@ -88,7 +88,8 @@
 		});
 
 		// websocket...for real time data
-		var socket = io.connect('ws://tweetmap.elasticbeanstalk.com/');
+		var socket = io();
+		//var socket = io.connect('ws://tweetmap.elasticbeanstalk.com/');
 		socket.on('data', function(d) {
 			allData.push(d);
 			// if there is a filter
