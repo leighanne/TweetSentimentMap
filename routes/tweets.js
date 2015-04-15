@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 
-var dburl = 'mongodb://52.11.124.218:27017/TweetMap';
+var dburl = 'mongodb://54.201.53.120:27017/TweetMap';
 
 /* GET data in the DB initially. */
 router.get('/', function(req, res, next) {

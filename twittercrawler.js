@@ -2,7 +2,7 @@ var Twitter = require('twitter');
 var MongoClient = require('mongodb').MongoClient;
 var Server = require('mongodb').Server;
 
-var dbserver = '52.11.124.218';
+var dbserver = '54.201.53.120';
 var dbport = 27017;
 var db;
 
