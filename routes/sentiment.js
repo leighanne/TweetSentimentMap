@@ -7,7 +7,7 @@ var dburl = 'mongodb://54.201.53.120:27017/TweetMap';
 
 router.post('/', function(req, res, next) {
 	if(req.get('x-amz-sns-message-type') == 'Notification') {
-		var tweet_id = req.body._id;
+		var tweet_id = req.body.Message._id;
 		// extract sentiment info from DB
 		MongoClient.connect(dburl, function(err, db) {
 			if(err) {

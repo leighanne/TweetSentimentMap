@@ -11,6 +11,11 @@
 
 	var infoWindow = new google.maps.InfoWindow();
 
+	var sentimentColors = {
+		'positive': 'ff7f0e',
+		'negative': '1f77b4',
+	};
+
 	// load map
 	function init_map() {
 		var mapOptions = {
@@ -36,6 +41,7 @@
 		};
 		if(filter) {
 			allData.forEach(function(d) {
+				d.marker = null;
 				var show = true;
 				keywords.forEach(function(k) {
 					if(d.text.toLowerCase().indexOf(k.toLowerCase()) < 0) {
@@ -46,6 +52,7 @@
 					var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 					data.mapData.push(loc);
 					var marker = new google.maps.Marker({ position: loc});
+					d.marker = marker;
 					addPopover(marker, d.text);
 					data.markers.push(marker);
 				}
@@ -55,6 +62,7 @@
 				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 				data.mapData.push(loc);
 				var marker = new google.maps.Marker({ position: loc});
+				d.marker = marker;
 				addPopover(marker, d.text);
 				data.markers.push(marker);
 			});
@@ -82,6 +90,7 @@
 				heatmapData.push(loc);
 				//markers.push(new google.maps.Marker({ position: loc}));
 				var marker = new google.maps.Marker({ position: loc});
+				d.marker = marker;
 				addPopover(marker, d.text);
 				markerClusterer.addMarker(marker);
 			});
@@ -92,6 +101,7 @@
 		//var socket = io.connect('ws://tweetmap.elasticbeanstalk.com/');
 		socket.on('data', function(d) {
 			allData.push(d);
+			d.marker = null;
 			// if there is a filter
 			if(filter) {
 				var show = false;
@@ -109,6 +119,7 @@
 			//markers.push(new google.maps.Marker({ position: loc}));
 			if($('#markerclusterCbox').is(':checked')) {
 				var marker = new google.maps.Marker({ position: loc});
+				d.marker = marker;
 				addPopover(marker, d.text);
 				markerClusterer.addMarker(marker);
 			} else {
@@ -124,7 +135,18 @@
 		});
 
 		socket.on('sentiment', function(d) {
-			//...
+			var data = null;
+			for(var i = 0; i < allData.length; i++) {
+				if(allData[i]._id == d._id) {
+					data = allData[i];
+					break;
+				}
+			}
+			if(data == null)
+				return;
+			var color = sentimentColors[d.sentiment];
+			var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
+			data.marker.setIcon(icon);
 		});
 
 		// filter
