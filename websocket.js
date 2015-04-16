@@ -6,6 +6,7 @@ var websocket = function(http) {
 			console.log('user disconnected');
 		});
 	});
+	global.socketio = io;
 	return io;
 };
 

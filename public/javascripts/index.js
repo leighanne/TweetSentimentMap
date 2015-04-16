@@ -123,6 +123,10 @@
 			}
 		});
 
+		socket.on('sentiment', function(d) {
+			//...
+		});
+
 		// filter
 		$('#filterBtn').click(function() {
 			var filterStr = $('#filterInput').val();
