@@ -54,6 +54,7 @@
 					var marker = new google.maps.Marker({ position: loc});
 					d.marker = marker;
 					addPopover(marker, d.text);
+					setMarkerColor(marker, d.sentiment);
 					data.markers.push(marker);
 				}
 			});
@@ -64,6 +65,7 @@
 				var marker = new google.maps.Marker({ position: loc});
 				d.marker = marker;
 				addPopover(marker, d.text);
+				setMarkerColor(marker, d.sentiment);
 				data.markers.push(marker);
 			});
 		}
@@ -81,6 +83,15 @@
 		});
 	}
 
+	function setMarkerColor(marker, sentiment) {
+		if(!sentiment) {
+			return;
+		}
+		var color = sentimentColors[sentiment];
+		var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
+		marker.setIcon(icon);
+	}
+
 	$(document).ready(function() {
 		// fetch data in database
 		$.get('/tweets', function(data) {
@@ -92,6 +103,7 @@
 				var marker = new google.maps.Marker({ position: loc});
 				d.marker = marker;
 				addPopover(marker, d.text);
+				setMarkerColor(marker, d.sentiment);
 				markerClusterer.addMarker(marker);
 			});
 		});
@@ -144,9 +156,8 @@
 			}
 			if(data == null)
 				return;
-			var color = sentimentColors[d.sentiment];
-			var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
-			data.marker.setIcon(icon);
+			data.sentiment = d.sentiment;
+			setMarkerColor(data.marker, data.sentiment);
 		});
 
 		// filter
