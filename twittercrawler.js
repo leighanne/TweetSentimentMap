@@ -7,13 +7,10 @@ var dbport = 27017;
 var db;
 
 var AWS = require('aws-sdk'),
+	awsCredentialsPath = './credential.json',
 	util = require('util');
 // configure AWS
-AWS.config.update({
-    'region': 'us-east-1',
-    'accessKeyId': 'AKIAJITEJ3RQWZ4AKUKQ',
-    'secretAccessKey': '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'
-});
+AWS.config.loadFromPath(awsCredentialsPath);
 
 var sqs = new AWS.SQS();
 
