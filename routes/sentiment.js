@@ -38,7 +38,7 @@ router.post('/', function(req, res, next) {
 		var subscribeURL = req.body.subscribeURL;
 		http.get(subscribeURL, function(res) {
 			console.log('Subscription Confirmed!');
-			console.log(res);
+			console.log(res.body);
 		}).on('error', function(e) {
 			console.log(e);
 		});

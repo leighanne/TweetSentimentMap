@@ -4,6 +4,7 @@ var AWS = require('aws-sdk'),
 	util = require('util');
 // configure AWS
 AWS.config.loadFromPath(awsCredentialsPath);
+AWS.config.region = 'us-west-2';
 // db
 var MongoClient = require('mongodb').MongoClient;
 var Server = require('mongodb').Server;
