@@ -30,6 +30,4 @@ node_modules
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
-
-.DS_Store
+!.elasticbeanstalk/*.global.yml
