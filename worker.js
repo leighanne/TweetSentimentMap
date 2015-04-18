@@ -16,7 +16,7 @@ var dbport = 27017;
 var db;
 
 var sqs = new AWS.SQS();
-
+var sns = new AWS.SNS();
 
 // init db
 var dbClient = new MongoClient(new Server(dbserver, dbport));
@@ -72,7 +72,6 @@ setInterval(function (){
 				}
 				else{// Updated 
 					// delete message from queue
-					console.log(result);
 					var paramsD = {
 						QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets',
 						ReceiptHandle: data.Messages[0].ReceiptHandle
@@ -81,6 +80,18 @@ setInterval(function (){
 					sqs.deleteMessage(paramsD, function (err, data){
 						if (err) console.log(err, err.stack);
 						else	console.log(data);
+					});
+					// send to SNS
+					var paramsSNS = {
+						Message: {_id: data.Messages[0].MessageAttributes.tweetID.StringValue},
+						MessageStructure: 'json',
+						Subject: 'sentiment',
+						TopicArn: 'arn:aws:sns:us-west-2:582714090425:TweetSentiment'
+					};
+					sns.publish(paramsSNS, function(err, data) {
+						if(err) {
+							console.log(err);
+						}
 					});
 				}
 			});
