@@ -81,7 +81,7 @@ setInterval(function (){
 					});
 					// send to SNS
 					var paramsSNS = {
-						Message: JSON.stringify({_id: data.Messages[0].MessageAttributes.tweetID.StringValue}),
+						Message: {_id: data.Messages[0].MessageAttributes.tweetID.StringValue},
 						MessageStructure: 'json',
 						Subject: 'sentiment',
 						TopicArn: 'arn:aws:sns:us-west-2:582714090425:TweetSentiment'
