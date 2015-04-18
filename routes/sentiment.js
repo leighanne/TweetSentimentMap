@@ -5,6 +5,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 var dburl = 'mongodb://54.201.53.120:27017/TweetMap';
 
+var http = require('http');
+
 router.post('/', function(req, res, next) {
 	if(req.get('x-amz-sns-message-type') == 'Notification') {
 		var tweet_id = req.body.Message._id;
@@ -31,6 +33,14 @@ router.post('/', function(req, res, next) {
 					console.log('Connecting to Collection failed');
 				}
 			}
+		});
+	} else if(req.get('x-amz-sns-message-type') == 'SubscriptionConfirmation') {
+		var subscribeURL = req.body.subscribeURL;
+		http.get(subscribeURL, function(res) {
+			console.log('Subscription Confirmed!');
+			console.log(res);
+		}).on('error', function(e) {
+			console.log(e);
 		});
 	} else {
 		console.log('Illegal Notification Received');
