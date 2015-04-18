@@ -65,7 +65,6 @@ var crawler = function(io) {
 							console.log('Inserting doc failed');
 						}
 						else{
-							console.log(tweet.text);
 							var params = {
 								MessageBody: tweet.text, /* required */
 								QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets', /* required */
@@ -79,7 +78,7 @@ var crawler = function(io) {
 							};
 							sqs.sendMessage(params, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
-								else     console.log(data);           // successful response
+								//else     console.log(data);           // successful response
 							});
 						}
 					});

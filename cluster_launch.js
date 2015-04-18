@@ -8,7 +8,7 @@ var launcher = function() {
     });
     if (cluster.isMaster) {
       // Fork workers.
-      console.log('master');
+      //console.log('master');
       for (var i = 0; i < numCPUs; i++) {
         cluster.fork();
       }
@@ -17,7 +17,7 @@ var launcher = function() {
         console.log('worker ' + worker.process.pid + ' died');
       });
     } else {
-        console.log('not master');
+        //console.log('not master');
     }
 };
 module.exports = launcher;
