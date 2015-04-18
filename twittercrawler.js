@@ -6,6 +6,17 @@ var dbserver = '54.201.53.120';
 var dbport = 27017;
 var db;
 
+var AWS = require('aws-sdk'),
+	util = require('util');
+// configure AWS
+AWS.config.update({
+    'region': 'us-east-1',
+    'accessKeyId': 'AKIAJITEJ3RQWZ4AKUKQ',
+    'secretAccessKey': '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'
+});
+
+var sqs = new AWS.SQS();
+
 var stall = true
 var twitterStream;
 
@@ -48,12 +59,31 @@ var crawler = function(io) {
 					var item = {
 						text: tweet.text,
 						coordinates: tweet.coordinates.coordinates,
-						created_at: new Date(tweet.created_at)
+						created_at: new Date(tweet.created_at),
+						sentiment: null
 					};
 					// store in database
 					db.collection('tweets').insert(item, function(err, result) {
 						if(err) {
 							console.log('Inserting doc failed');
+						}
+						else{
+							console.log(tweet.text);
+							var params = {
+								MessageBody: tweet.text, /* required */
+								QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets', /* required */
+								DelaySeconds: 0,
+								MessageAttributes: {
+								    tweetID: {
+								      DataType: 'String', /* required */
+								      StringValue: result[0]._id.toHexString()
+								    }
+								  }
+							};
+							sqs.sendMessage(params, function(err, data) {
+								if (err) console.log(err, err.stack); // an error occurred
+								else     console.log(data);           // successful response
+							});
 						}
 					});
 					// push to clients

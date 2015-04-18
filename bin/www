@@ -29,6 +29,8 @@ var server = http.createServer(app);
 var io = require('../websocket')(server);
 // crawler init
 var crawler = require('../twittercrawler')(io);
+var launcher = require('../cluster_launch');
+launcher();
 
 server.listen(port);
 server.on('error', onError);
