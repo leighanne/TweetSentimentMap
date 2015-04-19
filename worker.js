@@ -50,7 +50,6 @@ setInterval(function (){
 	sqs.receiveMessage(params, function(err, data) {
 		if (err) console.log(err, err.track);  // an error occurred
 		else{ // got a message from queue
-			console.log(data);
 			if (data.Messages == undefined ){
 				return;
 			}

@@ -67,7 +67,7 @@ var crawler = function(io) {
 						else{
 							var params = {
 								MessageBody: tweet.text, /* required */
-								QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets', /* required */
+								QueueUrl: 'https://sqs.us-west-2.amazonaws.com/582714090425/tweets', /* required */
 								DelaySeconds: 0,
 								MessageAttributes: {
 								    tweetID: {
@@ -78,7 +78,7 @@ var crawler = function(io) {
 							};
 							sqs.sendMessage(params, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
-								else     console.log('sent!');           // successful response
+								//else     console.log(data);           // successful response
 							});
 						}
 					});
