@@ -94,8 +94,6 @@
 		var color = sentimentColors[polar];
 		var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
 		marker.setIcon(icon);
-		polar == 'positive' ? posNum++ : negNum++;
-		refreshNum();
 	}
 
 	function refreshNum() {
@@ -115,6 +113,10 @@
 				d.marker = marker;
 				addPopover(marker, d.text);
 				setMarkerColor(marker, d.sentiment);
+				if(d.sentiment) {
+					d.sentiment >= 0 ? posNum++ : negNum++;
+					refreshNum();
+				}
 				markerClusterer.addMarker(marker);
 			});
 		});
@@ -167,6 +169,10 @@
 			}
 			if(data == null)
 				return;
+			if(d.sentiment) {
+				d.sentiment >= 0 ? posNum++ : negNum++;
+				refreshNum();
+			}
 			data.sentiment = d.sentiment;
 			setMarkerColor(data.marker, data.sentiment);
 		});
