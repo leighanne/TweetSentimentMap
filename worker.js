@@ -88,7 +88,7 @@ setInterval(function (){
 					sns.publish(paramsSNS, function(err, data) {
 						if(err) {
 							console.log(err);
-						}
+						}console.log('SNS sent');
 						//else console.log(data);
 					});
 				}

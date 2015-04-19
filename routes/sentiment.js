@@ -9,6 +9,7 @@ var http = require('http');
 
 router.post('/', function(req, res, next) {
 	if(req.get('x-amz-sns-message-type') == 'Notification') {
+		console.log('SNS received');
 		var tweet_id = req.body.Message._id;
 		// extract sentiment info from DB
 		MongoClient.connect(dburl, function(err, db) {
