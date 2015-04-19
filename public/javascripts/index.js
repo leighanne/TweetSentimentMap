@@ -16,6 +16,9 @@
 		'negative': '1f77b4',
 	};
 
+	var posNum = 0;
+	var negNum = 0;
+
 	// load map
 	function init_map() {
 		var mapOptions = {
@@ -84,13 +87,20 @@
 	}
 
 	function setMarkerColor(marker, sentiment) {
-		if(!sentiment) {
+		if(!sentiment || !marker) {
 			return;
 		}
-		var polar = sentiment > 0 ? 'positive' : 'negative';
+		var polar = sentiment >= 0 ? 'positive' : 'negative';
 		var color = sentimentColors[polar];
 		var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
 		marker.setIcon(icon);
+		polar == 'positive' ? posNum++ : negNum++;
+		refreshNum();
+	}
+
+	function refreshNum() {
+		$('#pos-num').text(posNum);
+		$('#neg-num').text(negNum);
 	}
 
 	$(document).ready(function() {
