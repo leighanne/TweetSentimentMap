@@ -38,7 +38,7 @@ dbClient.open(function(err, client) {
 
 // get message from queue
 var params = {
-	QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets', 
+	QueueUrl: 'https://sqs.us-west-2.amazonaws.com/582714090425/tweets', 
 	MaxNumberOfMessages: 1,
 	MessageAttributeNames: [
 	  'tweetID'
@@ -71,7 +71,7 @@ setInterval(function (){
 				else{// Updated 
 					// delete message from queue
 					var paramsD = {
-						QueueUrl: 'https://sqs.us-east-1.amazonaws.com/937582816189/tweets',
+						QueueUrl: 'https://sqs.us-west-2.amazonaws.com/582714090425/tweets',
 						ReceiptHandle: data.Messages[0].ReceiptHandle
 					};
 

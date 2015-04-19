@@ -101,6 +101,134 @@
 		$('#neg-num').text(negNum);
 	}
 
+	function buildTrendChart() {
+		var currentTrend = 0;
+		var data; // data to draw the chart
+		var newData; // new data to be displayed
+		var n; // number of data points to show
+		var duration; // time duration for updating line chart
+		var now; // the latest time in the chart
+
+		var margin = {top: 20, bottom: 20, left: 40, right: 20},
+			width = 300 - margin.left - margin.right,
+			height = 250 - margin.top - margin.bottom;
+
+		var x; // x scale
+		var y; // y scale
+		var line; // d3 line
+		var xAxis; // d3 xAxis
+		var yAxis; // d3 yAxis
+		var timeform = d3.time.format("%X");
+
+		var svg; // canvas
+		var xAxisSvg; // x axis svg
+		var yAxisSvg; // y axis svg
+		var path; // path svg
+		var xLabel;
+		var yLabel;
+
+		var drawLineChart = function() {
+			n = 20;
+			duration = 500;
+			model = mod;
+			data = d3.range(n).map(function() { return 0; });
+			newData = posNum - negNum;
+			now = new Date(Date.now() - duration);
+
+			x = d3.time.scale()
+				.domain([now - (n-2)*duration, now - duration])
+				.range([0, width]);
+
+			y = d3.scale.linear()
+				.range([height, 0]);
+
+			line = d3.svg.line()
+				.interpolate("basis")
+				.x(function(d, i) { return x(now - (n - 1 - i) * duration); })
+				.y(function(d, i) { return y(d); });
+
+			svg = d3.select("#sentimentTrendChart").append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom + 20)
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			svg.append("defs").append("clipPath")
+				.attr("id", "trendCurveClip")
+				.append("rect")
+				.attr("width", width)
+				.attr("height", height);
+
+			xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(timeform);
+			yAxis = d3.svg.axis().scale(y).orient("left");
+
+			xAxisSvg = svg.append("g")
+				.classed("axis", true)
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			xLabel = xAxisSvg.append("text")
+				.classed("axislabel", true)
+				.attr("x", width/2)
+				.attr("y", 25)
+				.attr("text-anchor", "middle")
+				.text("Time");
+
+			yAxisSvg = svg.append("g")
+				.classed("axis", true)
+				.call(yAxis);
+
+			yLabel = yAxisSvg.append("text")
+				.classed("axislabel", true)
+				.attr("x", -height/2)
+				.attr("y", -25)
+				.attr("transform", "rotate(-90)")
+				.attr("text-anchor", "middle")
+				.text("Trend");
+
+			path = svg.append("g")
+				.attr("clip-path", "url(#trendCurveClip)")
+				.append("path")
+				.data([data])
+				.classed("line", true)
+
+			tick();
+		};
+
+		var tick = function() {
+			now = new Date();
+			x.domain([now - (n-2)*duration, now - duration]);
+			y.domain([0, d3.max(data)]);
+
+			newData = posNum - negNum;
+			data.push(newData);
+
+			svg.select(".line")
+				.attr("d", line)
+				.attr("transform", null);
+
+			xAxisSvg.transition()
+				.duration(duration)
+				.ease("linear")
+				.call(xAxis);
+
+			yAxisSvg.transition()
+				.duration(duration)
+				.ease("linear")
+				.call(yAxis);
+			
+			path.transition()
+				.duration(duration)
+				.ease("linear")
+				.attr("transform", "translate(" + x(now - (n-1)*duration) + ")")
+				.each("end", render);
+
+			data.shift();
+		};
+
+		drawLineChart();
+	}
+
 	$(document).ready(function() {
 		// fetch data in database
 		$.get('/tweets', function(data) {
@@ -120,6 +248,9 @@
 				markerClusterer.addMarker(marker);
 			});
 		});
+
+		// build trend chart
+		buildTrendChart();
 
 		// websocket...for real time data
 		var socket = io();
