@@ -87,7 +87,8 @@
 		if(!sentiment) {
 			return;
 		}
-		var color = sentimentColors[sentiment];
+		var polar = sentiment > 0 ? 'positive' : 'negative';
+		var color = sentimentColors[polar];
 		var icon = "https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + color;
 		marker.setIcon(icon);
 	}
