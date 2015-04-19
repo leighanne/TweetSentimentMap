@@ -5,12 +5,14 @@ var ObjectID = require('mongodb').ObjectID;
 
 var dburl = 'mongodb://54.201.53.120:27017/TweetMap';
 
-var http = require('http');
+var https = require('https');
 
 router.post('/', function(req, res, next) {
 	if(req.get('x-amz-sns-message-type') == 'Notification') {
 		console.log('SNS received');
-		var tweet_id = req.body.Message._id;
+		var tweet_id = JSON.parse(req.body).Message._id;
+		console.log(tweet_id);
+		console.log(req.body);
 		// extract sentiment info from DB
 		MongoClient.connect(dburl, function(err, db) {
 			if(err) {
@@ -37,9 +39,7 @@ router.post('/', function(req, res, next) {
 		});
 	} else if(req.get('x-amz-sns-message-type') == 'SubscriptionConfirmation') {
 		var subscribeURL = JSON.parse(req.body).SubscribeURL;
-		console.log(subscribeURL);
-		console.log(req.body);
-		http.get(subscribeURL, function(res) {
+		https.get(subscribeURL, function(res) {
 			console.log('Subscription Confirmed!');
 			res.on('data', function(chunk) {
 				console.log('' + chunk);
