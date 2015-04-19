@@ -10,6 +10,9 @@ var https = require('https');
 router.post('/', function(req, res, next) {
 	if(req.get('x-amz-sns-message-type') == 'Notification') {
 		var tweet_id = JSON.parse(JSON.parse(req.body).Message)._id;
+		if(!tweet_id) {
+			console.log(req.body);
+		}
 		// extract sentiment info from DB
 		MongoClient.connect(dburl, function(err, db) {
 			if(err) {
@@ -18,7 +21,7 @@ router.post('/', function(req, res, next) {
 				var col = db.collection('tweets');
 				if(col) {
 					col.findOne({_id: new ObjectID(tweet_id)}, function(err, doc) {
-						if(err) {
+						if(err || !doc) {
 							console.log('Fetching documents failed');
 						} else {
 							var data = {}
