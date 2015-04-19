@@ -163,7 +163,7 @@
 
 			xAxisSvg = svg.append("g")
 				.classed("axis", true)
-				.attr("transform", "translate(0," + height + ")")
+				.attr("transform", "translate(0," + height/2 + ")")
 				.call(xAxis);
 
 			xLabel = xAxisSvg.append("text")
@@ -198,9 +198,10 @@
 			now = new Date();
 			newData = posNum - negNum;
 			data.push(newData);
-			
+
 			x.domain([now - (n-2)*duration, now - duration]);
-			y.domain([0, d3.max(data)]);
+			var limit = Math.abs(d3.max(data)) > Math.abs(d3.min(data)) ? Math.abs(d3.max(data)) : Math.abs(d3.min(data));
+			y.domain([-limit, limit]);
 
 			svg.select(".line")
 				.attr("d", line)
