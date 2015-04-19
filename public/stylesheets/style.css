@@ -28,7 +28,7 @@ html, body, #map-canvas {
 }
 
 #collapseSentimentTrend {
-	background-color: gray;
+	background-color: #e8e8e8;
 }
 
 #sentimentTrendChart {
@@ -41,7 +41,8 @@ html, body, #map-canvas {
 
 #sentimentTrendChart .axis path, #sentimentTrendChart .axis line {
 	fill: none;
-	shape-rendering: crispEdges;
+	stroke: #000;
+	shape-rendering: auto;
 }
 
 #sentimentTrendChart .axis text {
@@ -50,4 +51,6 @@ html, body, #map-canvas {
 
 #sentimentTrendChart .line {
 	fill: none;
+	stroke: #000;
+	stroke-width: 1.5px;
 }
