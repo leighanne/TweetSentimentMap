@@ -23,7 +23,7 @@ html, body, #map-canvas {
 	pointer-events: none;
 }
 
-#filter, #viz, #trend {
+#filter, #viz, #trendBtn, #collapseSentimentTrend {
 	pointer-events: auto;
 }
 
