@@ -37,6 +37,7 @@ router.post('/', function(req, res, next) {
 		});
 	} else if(req.get('x-amz-sns-message-type') == 'SubscriptionConfirmation') {
 		var subscribeURL = req.body.subscribeURL;
+		console.log(subscribeURL);
 		http.get(subscribeURL, function(res) {
 			console.log('Subscription Confirmed!');
 			console.log(res.body);

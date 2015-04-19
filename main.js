@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/tweets', tweets);
-app.use('/sentiment', sentiment);
+app.use('/sentimentnotify', sentiment);
 
 // disable status 304
 app.disable('etag');
