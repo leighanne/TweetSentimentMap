@@ -23,6 +23,31 @@ html, body, #map-canvas {
 	pointer-events: none;
 }
 
-#filter, #viz {
+#filter, #viz, #trend {
 	pointer-events: auto;
+}
+
+#collapseSentimentTrend {
+	background-color: gray;
+}
+
+#sentimentTrendChart {
+	text-align: center;
+}
+
+#sentimentTrendChart svg {
+	font: 10px sans-serif;
+}
+
+#sentimentTrendChart .axis path, #sentimentTrendChart .axis line {
+	fill: none;
+	shape-rendering: crispEdges;
+}
+
+#sentimentTrendChart .axis text {
+	font-size: 12px;
+}
+
+#sentimentTrendChart .line {
+	fill: none;
 }

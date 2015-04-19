@@ -110,7 +110,7 @@
 		var now; // the latest time in the chart
 
 		var margin = {top: 20, bottom: 20, left: 40, right: 20},
-			width = 300 - margin.left - margin.right,
+			width = 400 - margin.left - margin.right,
 			height = 250 - margin.top - margin.bottom;
 
 		var x; // x scale
@@ -130,7 +130,6 @@
 		var drawLineChart = function() {
 			n = 20;
 			duration = 500;
-			model = mod;
 			data = d3.range(n).map(function() { return 0; });
 			newData = posNum - negNum;
 			now = new Date(Date.now() - duration);
@@ -159,7 +158,7 @@
 				.attr("width", width)
 				.attr("height", height);
 
-			xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(timeform);
+			xAxis = d3.svg.axis().scale(x).orient("bottom");//.tickFormat(timeform);
 			yAxis = d3.svg.axis().scale(y).orient("left");
 
 			xAxisSvg = svg.append("g")
@@ -170,7 +169,7 @@
 			xLabel = xAxisSvg.append("text")
 				.classed("axislabel", true)
 				.attr("x", width/2)
-				.attr("y", 25)
+				.attr("y", 35)
 				.attr("text-anchor", "middle")
 				.text("Time");
 
@@ -181,7 +180,7 @@
 			yLabel = yAxisSvg.append("text")
 				.classed("axislabel", true)
 				.attr("x", -height/2)
-				.attr("y", -25)
+				.attr("y", -30)
 				.attr("transform", "rotate(-90)")
 				.attr("text-anchor", "middle")
 				.text("Trend");
@@ -197,11 +196,11 @@
 
 		var tick = function() {
 			now = new Date();
-			x.domain([now - (n-2)*duration, now - duration]);
-			y.domain([0, d3.max(data)]);
-
 			newData = posNum - negNum;
 			data.push(newData);
+			
+			x.domain([now - (n-2)*duration, now - duration]);
+			y.domain([0, d3.max(data)]);
 
 			svg.select(".line")
 				.attr("d", line)
@@ -221,7 +220,7 @@
 				.duration(duration)
 				.ease("linear")
 				.attr("transform", "translate(" + x(now - (n-1)*duration) + ")")
-				.each("end", render);
+				.each("end", tick);
 
 			data.shift();
 		};

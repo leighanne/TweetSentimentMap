@@ -5,6 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	<script type="text/javascript" src="javascripts/lib/jquery-1.11.2.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCilGU2swDNBmbAMQAet4MK8zZj7v7pCE&libraries=visualization"></script>
 	<script type="text/javascript" src="javascripts/lib/markerclusterer.min.js"></script>
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -47,6 +48,8 @@
 	</div>
 	</div>
 
+	<br>
+	<div id="trend">
 	<div class="row">
 	<div class="col-lg-3 col-lg-offset-8">
 		<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseSentimentTrend" aria-expanded="false" aria-controls="collapseSentimentTrend">
@@ -54,13 +57,12 @@
 		</button>
 	</div>
 	</div>
-
 	<br>
 	<div class="row">
 	<div class="col-lg-3 col-lg-offset-8 collapse" id="collapseSentimentTrend">
 		<div id="sentimentTrendChart">
-			Demo...
 		</div>
+	</div>
 	</div>
 	</div>
 </div>
