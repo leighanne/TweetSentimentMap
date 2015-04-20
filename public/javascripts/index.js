@@ -131,7 +131,7 @@
 			n = 20;
 			duration = 500;
 			data = d3.range(n).map(function() { return 0; });
-			newData = posNum - negNum;
+			newData = (posNum / (posNum + negNum) - 0.5) * 2;
 			now = new Date(Date.now() - duration);
 
 			x = d3.time.scale()
@@ -139,6 +139,7 @@
 				.range([0, width]);
 
 			y = d3.scale.linear()
+				.domain([-1, 1])
 				.range([height, 0]);
 
 			line = d3.svg.line()
@@ -196,12 +197,12 @@
 
 		var tick = function() {
 			now = new Date();
-			newData = posNum - negNum;
+			newData = (posNum / (posNum + negNum) - 0.5) * 2;
 			data.push(newData);
 
 			x.domain([now - (n-2)*duration, now - duration]);
-			var limit = Math.abs(d3.max(data)) > Math.abs(d3.min(data)) ? Math.abs(d3.max(data)) : Math.abs(d3.min(data));
-			y.domain([-limit, limit]);
+			// var limit = Math.abs(d3.max(data)) > Math.abs(d3.min(data)) ? Math.abs(d3.max(data)) : Math.abs(d3.min(data));
+			// y.domain([-limit, limit]);
 
 			svg.select(".line")
 				.attr("d", line)
