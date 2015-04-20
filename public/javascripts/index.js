@@ -37,6 +37,14 @@
 	}
 	google.maps.event.addDomListener(window, 'load', init_map);
 
+	function ifSentimentDisplay(d) {
+		if($('#posCbox').is(':checked') && d.sentiment > 0 || $('#negCbox').is(':checked') && d.sentiment < 0 || $('#neuCbox').is(':checked') && !d.sentiment) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	function buildData() {
 		var data = {
 			mapData: [],
@@ -51,7 +59,7 @@
 						show = false;
 					}
 				});
-				if(show) {
+				if(show && ifSentimentDisplay(d)) {
 					var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
 					data.mapData.push(loc);
 					var marker = new google.maps.Marker({ position: loc});
@@ -63,13 +71,15 @@
 			});
 		} else {
 			allData.forEach(function(d) {
-				var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
-				data.mapData.push(loc);
-				var marker = new google.maps.Marker({ position: loc});
-				d.marker = marker;
-				addPopover(marker, d.text);
-				setMarkerColor(marker, d.sentiment);
-				data.markers.push(marker);
+				if(ifSentimentDisplay(d)) {
+					var loc = new google.maps.LatLng(d.coordinates[1], d.coordinates[0]);
+					data.mapData.push(loc);
+					var marker = new google.maps.Marker({ position: loc});
+					d.marker = marker;
+					addPopover(marker, d.text);
+					setMarkerColor(marker, d.sentiment);
+					data.markers.push(marker);
+				}
 			});
 		}
 		return data;
@@ -310,7 +320,7 @@
 		});
 
 		// filter
-		$('#filterBtn').click(function() {
+		var filterListener = function () {
 			var filterStr = $('#filterInput').val();
 			var result;
 			markerClusterer.clearMarkers();
@@ -329,7 +339,12 @@
 			if($('#markerclusterCbox').is(':checked')) {
 				markerClusterer = new MarkerClusterer(map, result.markers);
 			}
-		});
+		}
+
+		$('#filterBtn').click(filterListener);
+		$('#posCbox').change(filterListener);
+		$('#negCbox').change(filterListener);
+		$('#neuCbox').change(filterListener);
 
 		// heatmap check
 		$('#heatmapCbox').change(function() {
@@ -350,6 +365,7 @@
 				//markerClusterer.setMap(null);
 			}
 		});
+
 	});
 
 })();
