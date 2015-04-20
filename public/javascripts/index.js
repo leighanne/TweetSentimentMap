@@ -139,7 +139,7 @@
 				.range([0, width]);
 
 			y = d3.scale.linear()
-				.domain([-1, 1])
+				//.domain([-1, 1])
 				.range([height, 0]);
 
 			line = d3.svg.line()
@@ -201,8 +201,8 @@
 			data.push(newData);
 
 			x.domain([now - (n-2)*duration, now - duration]);
-			// var limit = Math.abs(d3.max(data)) > Math.abs(d3.min(data)) ? Math.abs(d3.max(data)) : Math.abs(d3.min(data));
-			// y.domain([-limit, limit]);
+			var limit = Math.abs(d3.max(data)) > Math.abs(d3.min(data)) ? Math.abs(d3.max(data)) : Math.abs(d3.min(data));
+			y.domain([-limit, limit]);
 
 			svg.select(".line")
 				.attr("d", line)
