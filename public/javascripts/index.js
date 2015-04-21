@@ -141,7 +141,7 @@
 			n = 20;
 			duration = 500;
 			data = d3.range(n).map(function() { return 0; });
-			newData = (posNum / (posNum + negNum) - 0.5) * 2;
+			newData = posNum + negNum == 0 ? 0 : (posNum / (posNum + negNum) - 0.5) * 2;
 			now = new Date(Date.now() - duration);
 
 			x = d3.time.scale()
@@ -207,7 +207,7 @@
 
 		var tick = function() {
 			now = new Date();
-			newData = (posNum / (posNum + negNum) - 0.5) * 2;
+			newData = posNum + negNum == 0 ? 0 : (posNum / (posNum + negNum) - 0.5) * 2;
 			data.push(newData);
 
 			x.domain([now - (n-2)*duration, now - duration]);
